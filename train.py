@@ -11,6 +11,7 @@ from torch.utils.data import DataLoader
 import torch 
 from torch.cuda.amp import GradScaler, autocast
 from tqdm import tqdm 
+from typing import Tuple
 
 def train(model: nn.Module, train_dl: DataLoader, val_dl: DataLoader, optimizer: torch.optim, logger: LOGWRITER, output_dir: str, epochs: int):
     es_mech = EarlyStopMechanism(metric_threshold=0.05, grace_threshold=10, save_path=os.path.join(output_dir, "saved_weights"))
@@ -89,12 +90,13 @@ if __name__ == "__main__":
     parser.add_argument("--lr", type=float, default=1e-4, help="Learning rate for model")
     parser.add_argument("--epochs", type=int, default=100, help="Number of epochs for training")
     parser.add_argument("--path", type=str, help="Model weights to load onto UNet")
-    
+    parser.add_argument("--level", type=int, help="Single noise Level for noise generation")
+    parser.add_argument("--range", type=Tuple(int), default=[15, 50], help="Range of noise level defined as two numbers, start and end bound.")
     args = parser.parse_args()
     
     # Load dataset load_dataset(root_dir: str, patch_size: int, batch_size: int, mode: str="train")
-    train_dl = load_dataset(args.root_dir, patch_size=256, batch_size=16, mode="train")
-    val_dl = load_dataset(args.root_dir, patch_size=384, batch_size=16, mode="val")
+    train_dl = load_dataset(args.root_dir, patch_size=256, batch_size=16, mode="train", noise_level=args.level, noise_range=args.range)
+    val_dl = load_dataset(args.root_dir, patch_size=384, batch_size=16, mode="val", noise_level=args.level, noise_range=args.range)
     
     model = UNet()
     if args.path: 
