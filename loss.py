@@ -117,7 +117,7 @@ class MSE_Loss(nn.Module):
         """
         Initializes MSE Calculation module.
         """
-        super.__init__()
+        super().__init__()
 
     def forward(self, x, y): 
         """

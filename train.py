@@ -1,23 +1,22 @@
-from model import UNet 
+from model import UNet
 from dataset import load_dataset
 from loss import PSNR, SSIM, MSE_Loss
-from utils.log_writer import LOGWRITER 
+from utils.log_writer import LOGWRITER
 from utils.early_stop import EarlyStopMechanism
 
-import argparse 
+import argparse
 import os
 import torch.nn as nn
 from torch.utils.data import DataLoader
-import torch 
-from torch.cuda.amp import GradScaler, autocast
-from tqdm import tqdm 
-from typing import Tuple
+import torch
+from torch.amp import GradScaler, autocast
+from tqdm import tqdm
 
 def train(model: nn.Module, train_dl: DataLoader, val_dl: DataLoader, optimizer: torch.optim, logger: LOGWRITER, output_dir: str, epochs: int):
     es_mech = EarlyStopMechanism(metric_threshold=0.05, grace_threshold=10, save_path=os.path.join(output_dir, "saved_weights"))
     
     mse_loss = MSE_Loss()
-    psnr_loss = PSNR() 
+    psnr_loss = PSNR()
     ssim_loss = SSIM()
     
     scaler = GradScaler()
@@ -35,12 +34,11 @@ def train(model: nn.Module, train_dl: DataLoader, val_dl: DataLoader, optimizer:
             
             optimizer.zero_grad()
             
-            with autocast():
+            with autocast("cuda"):
                 prediction = model(noisy_img)
                 loss = mse_loss(clean_img, prediction)
             
             scaler.scale(loss).backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             scaler.step(optimizer)
             scaler.update()
             
@@ -91,7 +89,7 @@ if __name__ == "__main__":
     parser.add_argument("--epochs", type=int, default=100, help="Number of epochs for training")
     parser.add_argument("--path", type=str, help="Model weights to load onto UNet")
     parser.add_argument("--level", type=int, help="Single noise Level for noise generation")
-    parser.add_argument("--range", type=Tuple(int), default=[15, 50], help="Range of noise level defined as two numbers, start and end bound.")
+    parser.add_argument("--range", default=[15, 50], help="Range of noise level defined as two numbers, start and end bound.")
     args = parser.parse_args()
     
     # Load dataset load_dataset(root_dir: str, patch_size: int, batch_size: int, mode: str="train")

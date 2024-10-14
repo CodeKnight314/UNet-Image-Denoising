@@ -75,7 +75,7 @@ def load_dataset(root_dir: str, patch_size: int, batch_size: int, mode: str="tra
         torch.data.utils.DataLoader: Dataloader class of the dataset
     """
     assert mode in ["train", "val", "test"], f"[ERROR] Invalid mode for dataset. Mode {mode} is not available."
-    clean_dir = os.path.join(root_dir, os.path.join(mode, "clean"))
+    clean_dir = os.path.join(root_dir, mode)
     
     dataset = ImageDataset(clean_dir=clean_dir, 
                            patch_size=patch_size, 
