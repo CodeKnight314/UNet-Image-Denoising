@@ -9,17 +9,17 @@ Training samples are randomly cropped and resized to 256x256, while validation s
 The UNet model was trained on a uniform distribution of noise levels ranging from 15 to 50, with a learning rate of 0.0001 for 25 epochs. Below are some visual results from the COCO validation set.
 
 <p align="center">
-  <img src="visuals/sample_1.png" alt="Sample 1">
+  <img src="visuals/sample 1.png" alt="Sample 1">
   <br>
   <em>Fairly faithful restoration but with detail loss</em>
 </p>
 <p align="center">
-  <img src="visuals/sample_2.png" alt="Sample 2">
+  <img src="visuals/sample 2.png" alt="Sample 2">
   <br>
   <em>Faithful restoration but with color difference</em>
 </p>
 <p align="center">
-  <img src="visuals/sample_3.png" alt="Sample 3">
+  <img src="visuals/sample 3.png" alt="Sample 3">
   <br>
   <em>Fairly faithful restoration but with detail loss</em>
 </p>
